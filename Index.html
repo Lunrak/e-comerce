@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Tienda Online de Tecnología</title>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/componentes.css">
+    <link rel="stylesheet" href="css/productos.css">
+    <link rel="stylesheet" href="css/carrito.css">
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+</head>
+
+<body>
+    <!-- Cabecera Principal -->
+    <header class="cabecera" id="cabeceraPrincipal">
+        <div class="contenedor-cabecera">
+            <!-- Logo -->
+            <div class="logo-tienda">
+                <a href="#" class="enlace-logo" id="enlaceInicio">
+                    <i class="fas fa-laptop logo-icono"></i>
+                    <span class="logo-texto">TechStore</span>
+                </a>
+                <span class="logo-slogan">Tecnología a tu alcance</span>
+            </div>
+
+            <!-- Barra de Búsqueda -->
+            <div class="contenedor-busqueda">
+                <div class="barra-busqueda">
+                    <input type="text" class="campo-busqueda" id="campoBusqueda"
+                        placeholder="Buscar productos, marcas, categorías..." autocomplete="off">
+                    <button class="boton-busqueda" id="botonBuscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="sugerencias-busqueda" id="sugerenciasBusqueda"></div>
+                </div>
+            </div>
+
+            <!-- Acciones de Usuario -->
+            <div class="acciones-usuario">
+                <!-- Cuenta -->
+                <div class="accion-item" id="contenedorCuenta">
+                    <button class="boton-accion" id="botonCuenta">
+                        <i class="fas fa-user"></i>
+                        <span class="texto-accion">Cuenta</span>
+                    </button>
+                    <div class="menu-desplegable" id="menuCuenta">
+                        <div class="info-usuario">
+                            <span class="saludo-usuario">¡Hola, Invitado!</span>
+                            <button class="enlace-menu" id="botonIniciarSesion">Iniciar Sesión</button>
+                        </div>
+                        <div class="separador-menu"></div>
+                        <a href="#" class="enlace-menu">
+                            <i class="fas fa-heart"></i>
+                            Mis Favoritos
+                        </a>
+                        <a href="#" class="enlace-menu">
+                            <i class="fas fa-box"></i>
+                            Mis Pedidos
+                        </a>
+                        <a href="#" class="enlace-menu">
+                            <i class="fas fa-cog"></i>
+                            Configuración
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Favoritos -->
+                <div class="accion-item">
+                    <button class="boton-accion" id="botonFavoritos">
+                        <i class="far fa-heart"></i>
+                        <span class="texto-accion">Favoritos</span>
+                        <span class="contador-badge" id="contadorFavoritos">0</span>
+                    </button>
+                </div>
+
+                <!-- Carrito -->
+                <div class="accion-item" id="contenedorCarrito">
+                    <button class="boton-accion" id="botonCarrito">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="texto-accion">Carrito</span>
+                        <span class="contador-badge" id="contadorCarrito">0</span>
+                    </button>
+
+                    <!-- Mini Carrito -->
+                    <div class="mini-carrito" id="miniCarrito">
+                        <div class="encabezado-mini-carrito">
+                            <h4>Tu Carrito</h4>
+                            <span class="contador-items" id="contadorItemsMini">0 items</span>
+                        </div>
+
+                        <div class="contenido-mini-carrito" id="contenidoMiniCarrito">
+                            <!-- Items se cargan dinámicamente -->
+                        </div>
+
+                        <div class="resumen-mini-carrito">
+                            <div class="total-mini-carrito">
+                                <span>Total:</span>
+                                <span class="precio-total" id="precioTotalMini">$0.00</span>
+                            </div>
+                            <div class="acciones-mini-carrito">
+                                <button class="boton-secundario" id="verCarritoCompleto">
+                                    Ver Carrito
+                                </button>
+                                <button class="boton-primario" id="irACheckout">
+                                    Comprar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón Menú Móvil -->
+            <button class="boton-menu-movil" id="botonMenuMovil">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Navegación Principal -->
+        <nav class="navegacion-principal" id="navegacionPrincipal">
+            <div class="contenedor-navegacion">
+                <ul class="menu-categorias" id="menuCategorias">
+                    <!-- Categorías se cargan dinámicamente -->
+                </ul>
+
+                <div class="ofertas-especiales">
+                    <a href="#" class="enlace-oferta">
+                        <i class="fas fa-bolt"></i>
+                        Ofertas Flash
+                    </a>
+                    <a href="#" class="enlace-oferta">
+                        <i class="fas fa-shipping-fast"></i>
+                        Envío Gratis
+                    </a>
+                    <a href="#" class="enlace-oferta">
+                        <i class="fas fa-star"></i>
+                        Nuevos Productos
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="contenido-principal">
+        <div class="contenedor-pagina">
+            <!-- Barra Lateral de Filtros -->
+            <aside class="barra-lateral-filtros" id="barraFiltros">
+                <div class="encabezado-filtros">
+                    <h3><i class="fas fa-filter"></i> Filtros</h3>
+                    <button class="boton-limpiar" id="limpiarFiltros">Limpiar Todo</button>
+                </div>
+
+                <!-- Filtro de Categorías -->
+                <div class="grupo-filtro" id="filtroCategorias">
+                    <div class="titulo-filtro">
+                        <h4>Categorías</h4>
+                        <button class="boton-toggle-filtro">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="contenido-filtro">
+                        <!-- Categorías se cargan dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Filtro de Precio -->
+                <div class="grupo-filtro" id="filtroPrecio">
+                    <div class="titulo-filtro">
+                        <h4>Rango de Precio</h4>
+                        <button class="boton-toggle-filtro">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="contenido-filtro">
+                        <div class="rango-precio">
+                            <div class="valores-precio">
+                                <span id="precioMinimo">$0</span>
+                                <span id="precioMaximo">$5000</span>
+                            </div>
+                            <div class="slider-precio">
+                                <input type="range" class="slider-min" id="sliderPrecioMin" min="0" max="5000"
+                                    value="0">
+                                <input type="range" class="slider-max" id="sliderPrecioMax" min="0" max="5000"
+                                    value="5000">
+                                <div class="rango-seleccionado"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro de Marcas -->
+                <div class="grupo-filtro" id="filtroMarcas">
+                    <div class="titulo-filtro">
+                        <h4>Marcas</h4>
+                        <button class="boton-toggle-filtro">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="contenido-filtro">
+                        <!-- Marcas se cargan dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Filtro de Calificación -->
+                <div class="grupo-filtro" id="filtroCalificacion">
+                    <div class="titulo-filtro">
+                        <h4>Calificación</h4>
+                        <button class="boton-toggle-filtro">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="contenido-filtro">
+                        <!-- Estrellas se cargan dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Filtro de Disponibilidad -->
+                <div class="grupo-filtro" id="filtroDisponibilidad">
+                    <div class="titulo-filtro">
+                        <h4>Disponibilidad</h4>
+                        <button class="boton-toggle-filtro">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="contenido-filtro">
+                        <!-- Opciones se cargan dinámicamente -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Área de Productos -->
+            <section class="area-productos">
+                <!-- Encabezado de Productos -->
+                <div class="encabezado-productos">
+                    <div class="info-resultados">
+                        <h2 id="tituloCategoriaActual">Todos los Productos</h2>
+                        <span class="contador-resultados" id="contadorResultados">
+                            Mostrando <span id="productosMostrados">0</span> de
+                            <span id="productosTotales">0</span> productos
+                        </span>
+                    </div>
+
+                    <div class="controles-ordenamiento">
+                        <label for="selectOrdenar">Ordenar por:</label>
+                        <select class="select-ordenar" id="selectOrdenar">
+                            <option value="relevancia">Más Relevantes</option>
+                            <option value="precio-asc">Precio: Menor a Mayor</option>
+                            <option value="precio-desc">Precio: Mayor a Menor</option>
+                            <option value="nombre-asc">Nombre: A-Z</option>
+                            <option value="nombre-desc">Nombre: Z-A</option>
+                            <option value="calificacion">Mejor Calificación</option>
+                            <option value="nuevos">Más Nuevos</option>
+                        </select>
+
+                        <div class="controles-vista">
+                            <button class="boton-vista active" data-vista="grid">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="boton-vista" data-vista="lista">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros Activos -->
+                <div class="filtros-activos" id="filtrosActivos">
+                    <!-- Filtros activos se muestran aquí -->
+                </div>
+
+                <!-- Grid de Productos -->
+                <div class="grid-productos" id="gridProductos">
+                    <!-- Productos se cargan dinámicamente -->
+                </div>
+
+                <!-- Paginación -->
+                <div class="paginacion" id="paginacion">
+                    <button class="boton-paginacion anterior" id="paginaAnterior">
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </button>
+
+                    <div class="numeros-pagina" id="numerosPagina">
+                        <!-- Números de página se generan dinámicamente -->
+                    </div>
+
+                    <button class="boton-paginacion siguiente" id="paginaSiguiente">
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Estado Vacío -->
+                <div class="estado-vacio" id="estadoVacio">
+                    <div class="icono-estado">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>No se encontraron productos</h3>
+                    <p>Intenta con otros filtros o términos de búsqueda</p>
+                    <button class="boton-primario" id="limpiarBusqueda">
+                        Limpiar Búsqueda
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Sección de Ofertas Especiales -->
+    <section class="seccion-ofertas" id="seccionOfertas">
+        <div class="contenedor-ofertas">
+            <div class="encabezado-ofertas">
+                <h2><i class="fas fa-bolt"></i> Ofertas Especiales</h2>
+                <div class="contador-oferta" id="contadorOferta">
+                    <span class="tiempo-oferta" id="tiempoOferta">24:00:00</span>
+                </div>
+            </div>
+
+            <div class="carrusel-ofertas" id="carruselOfertas">
+                <!-- Ofertas se cargan dinámicamente -->
+            </div>
+
+            <div class="controles-carrusel">
+                <button class="boton-carrusel anterior" id="anteriorOferta">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="indicadores-carrusel" id="indicadoresOferta"></div>
+                <button class="boton-carrusel siguiente" id="siguienteOferta">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Testimonios -->
+    <section class="seccion-testimonios">
+        <div class="contenedor-testimonios">
+            <h2>Lo que dicen nuestros clientes</h2>
+
+            <div class="grid-testimonios" id="gridTestimonios">
+                <!-- Testimonios se cargan dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de Página -->
+    <footer class="pie-pagina">
+        <div class="contenedor-pie">
+            <!-- Información de la Tienda -->
+            <div class="seccion-pie">
+                <div class="logo-pie">
+                    <i class="fas fa-laptop logo-icono"></i>
+                    <span class="logo-texto">TechStore</span>
+                </div>
+                <p class="descripcion-pie">
+                    Tu tienda de tecnología confiable. Productos de calidad con garantía y soporte técnico.
+                </p>
+                <div class="redes-sociales">
+                    <a href="#" class="enlace-red-social" title="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="enlace-red-social" title="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="enlace-red-social" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="enlace-red-social" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Enlaces Rápidos -->
+            <div class="seccion-pie">
+                <h4>Enlaces Rápidos</h4>
+                <ul class="lista-enlaces">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Productos</a></li>
+                    <li><a href="#">Ofertas</a></li>
+                    <li><a href="#">Nuevos Lanzamientos</a></li>
+                    <li><a href="#">Marcas</a></li>
+                </ul>
+            </div>
+
+            <!-- Categorías -->
+            <div class="seccion-pie">
+                <h4>Categorías</h4>
+                <ul class="lista-enlaces" id="listaCategoriasPie">
+                    <!-- Categorías se cargan dinámicamente -->
+                </ul>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="seccion-pie">
+                <h4>Contacto</h4>
+                <ul class="lista-contacto">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Av. Tecnología 123, Ciudad Digital</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <span>+1 (555) 123-4567</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <span>info@techstore.com</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock"></i>
+                        <span>Lun-Vie: 9:00 - 18:00</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="seccion-pie newsletter">
+                <h4>Suscríbete a nuestro Newsletter</h4>
+                <p>Recibe ofertas exclusivas y novedades tecnológicas.</p>
+                <form class="formulario-newsletter" id="formularioNewsletter">
+                    <input type="email" class="campo-newsletter" placeholder="Tu correo electrónico" required>
+                    <button type="submit" class="boton-newsletter">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright">
+            <div class="contenedor-copyright">
+                <p>&copy; 2024 TechStore. Todos los derechos reservados.</p>
+                <div class="enlaces-legales">
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Aviso Legal</a>
+                    <a href="#">Política de Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== MODALES Y PANELES ===== -->
+
+    <!-- Modal de Carrito -->
+    <div class="modal-carrito" id="modalCarrito">
+        <div class="contenido-modal-carrito">
+            <div class="encabezado-modal">
+                <h3>
+                    <i class="fas fa-shopping-cart"></i>
+                    Mi Carrito de Compras
+                </h3>
+                <button class="boton-cerrar-modal" id="cerrarModalCarrito">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="cuerpo-modal-carrito">
+                <!-- Contenido se carga dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Producto -->
+    <div class="modal-producto" id="modalProducto">
+        <div class="contenido-modal-producto" id="contenidoModalProducto">
+            <!-- Contenido se carga dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Modal de Checkout -->
+    <div class="modal-checkout" id="modalCheckout">
+        <div class="contenido-modal-checkout">
+            <!-- Contenido se carga dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal-confirmacion" id="modalConfirmacion">
+        <div class="contenido-modal-confirmacion">
+            <!-- Contenido se carga dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="contenedor-toasts" id="contenedorToasts"></div>
+
+    <!-- Overlay para modales -->
+    <div class="overlay-modal" id="overlayModal"></div>
+
+    <!-- Scripts -->
+    <script src="js/configuracion.js"></script>
+    <script src="js/tienda.js"></script>
+    <script src="js/productos.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/filtros.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/localStorage.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

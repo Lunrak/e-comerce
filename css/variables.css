@@ -1,0 +1,413 @@
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* ===== COLORES PRIMARIOS ===== */
+    --color-primario: #2563eb;
+    --color-primario-oscuro: #1d4ed8;
+    --color-primario-claro: #60a5fa;
+    --color-primario-transparente: rgba(37, 99, 235, 0.1);
+    
+    /* ===== COLORES SECUNDARIOS ===== */
+    --color-secundario: #10b981;
+    --color-secundario-oscuro: #059669;
+    --color-secundario-claro: #34d399;
+    
+    /* ===== COLORES DE ÉXITO, ERROR, ADVERTENCIA, INFORMACIÓN ===== */
+    --color-exito: #10b981;
+    --color-error: #ef4444;
+    --color-advertencia: #f59e0b;
+    --color-informacion: #3b82f6;
+    
+    /* ===== COLORES DE TEXTO ===== */
+    --color-texto-primario: #1f2937;
+    --color-texto-secundario: #6b7280;
+    --color-texto-terciario: #9ca3af;
+    --color-texto-inverso: #ffffff;
+    
+    /* ===== COLORES DE FONDO ===== */
+    --color-fondo-primario: #ffffff;
+    --color-fondo-secundario: #f9fafb;
+    --color-fondo-terciario: #f3f4f6;
+    --color-fondo-oscuro: #111827;
+    
+    /* ===== COLORES DE BORDES ===== */
+    --color-borde: #e5e7eb;
+    --color-borde-hover: #d1d5db;
+    --color-borde-focus: #3b82f6;
+    
+    /* ===== COLORES DE SUPERFICIES ===== */
+    --color-superficie: #ffffff;
+    --color-superficie-elevada: #ffffff;
+    --color-superficie-sombra: rgba(0, 0, 0, 0.1);
+    
+    /* ===== COLORES DE PRODUCTOS ===== */
+    --color-oferta: #ef4444;
+    --color-nuevo: #10b981;
+    --color-agotado: #9ca3af;
+    --color-descuento: #dc2626;
+    
+    /* ===== COLORES DE ESTADO ===== */
+    --color-estado-hover: #f3f4f6;
+    --color-estado-active: #e5e7eb;
+    --color-estado-disabled: #f9fafb;
+    
+    /* ===== SOMBRAS ===== */
+    --sombra-suave: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --sombra-media: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --sombra-fuerte: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --sombra-extra-fuerte: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --sombra-interna: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    
+    /* ===== RADIOS DE BORDE ===== */
+    --radio-borde-pequeno: 4px;
+    --radio-borde-mediano: 8px;
+    --radio-borde-grande: 12px;
+    --radio-borde-completo: 9999px;
+    
+    /* ===== ESPACIADO ===== */
+    --espacio-xxs: 2px;
+    --espacio-xs: 4px;
+    --espacio-sm: 8px;
+    --espacio-md: 16px;
+    --espacio-lg: 24px;
+    --espacio-xl: 32px;
+    --espacio-xxl: 48px;
+    --espacio-xxxl: 64px;
+    
+    /* ===== TIPOGRAFÍA ===== */
+    --fuente-principal: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --fuente-secundaria: 'Montserrat', var(--fuente-principal);
+    
+    /* Tamaños de fuente */
+    --tamano-fuente-xxs: 10px;
+    --tamano-fuente-xs: 12px;
+    --tamano-fuente-sm: 14px;
+    --tamano-fuente-base: 16px;
+    --tamano-fuente-lg: 18px;
+    --tamano-fuente-xl: 20px;
+    --tamano-fuente-xxl: 24px;
+    --tamano-fuente-xxxl: 32px;
+    --tamano-fuente-gigante: 48px;
+    
+    /* Pesos de fuente */
+    --peso-fuente-light: 300;
+    --peso-fuente-normal: 400;
+    --peso-fuente-medium: 500;
+    --peso-fuente-semibold: 600;
+    --peso-fuente-bold: 700;
+    --peso-fuente-extrabold: 800;
+    
+    /* Alturas de línea */
+    --altura-linea-corta: 1.2;
+    --altura-linea-normal: 1.5;
+    --altura-linea-larga: 1.8;
+    
+    /* ===== TRANSICIONES ===== */
+    --transicion-rapida: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transicion-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transicion-lenta: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* ===== Z-INDEX ===== */
+    --z-index-base: 1;
+    --z-index-elevado: 10;
+    --z-index-superior: 100;
+    --z-index-modal: 1000;
+    --z-index-toast: 1100;
+    --z-index-maximo: 9999;
+    
+    /* ===== ANIMACIONES ===== */
+    --animacion-desvanecer: fadeIn 0.3s ease;
+    --animacion-deslizar-arriba: slideUp 0.3s ease;
+    --animacion-deslizar-abajo: slideDown 0.3s ease;
+    --animacion-escalar: scaleIn 0.2s ease;
+    --animacion-temblar: shake 0.5s ease;
+    
+    /* ===== TAMAÑOS DE CONTENEDORES ===== */
+    --ancho-maximo-contenedor: 1280px;
+    --ancho-maximo-pagina: 1200px;
+    --ancho-barra-lateral: 280px;
+    --ancho-mini-carrito: 320px;
+    --ancho-modal-pequeno: 400px;
+    --ancho-modal-mediano: 600px;
+    --ancho-modal-grande: 800px;
+    --ancho-modal-extra-grande: 1000px;
+    
+    /* ===== ALTURAS ===== */
+    --altura-cabecera: 64px;
+    --altura-cabecera-movil: 56px;
+    --altura-imagen-producto: 200px;
+    --altura-mini-carrito: 400px;
+    
+    /* ===== GRIDS ===== */
+    --columnas-grid-productos: 4;
+    --columnas-grid-movil: 2;
+    --gap-grid-productos: var(--espacio-md);
+    
+    /* ===== EFECTOS ===== */
+    --efecto-desenfoque: blur(8px);
+    --opacidad-overlay: 0.5;
+}
+
+/* ===== VARIABLES PARA MODO OSCURO ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-texto-primario: #f9fafb;
+        --color-texto-secundario: #d1d5db;
+        --color-texto-terciario: #9ca3af;
+        
+        --color-fondo-primario: #111827;
+        --color-fondo-secundario: #1f2937;
+        --color-fondo-terciario: #374151;
+        --color-fondo-oscuro: #030712;
+        
+        --color-borde: #374151;
+        --color-borde-hover: #4b5563;
+        
+        --color-superficie: #1f2937;
+        --color-superficie-elevada: #374151;
+        
+        --color-estado-hover: #374151;
+        --color-estado-active: #4b5563;
+        
+        --sombra-suave: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+        --sombra-media: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        --sombra-fuerte: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* ===== ANIMACIONES CSS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* ===== CLASES DE UTILIDAD ===== */
+.color-primario {
+    color: var(--color-primario);
+}
+
+.color-exito {
+    color: var(--color-exito);
+}
+
+.color-error {
+    color: var(--color-error);
+}
+
+.color-advertencia {
+    color: var(--color-advertencia);
+}
+
+.fondo-primario {
+    background-color: var(--color-primario);
+}
+
+.fondo-secundario {
+    background-color: var(--color-fondo-secundario);
+}
+
+.texto-centrado {
+    text-align: center;
+}
+
+.texto-derecha {
+    text-align: right;
+}
+
+.texto-izquierda {
+    text-align: left;
+}
+
+.oculto {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+.flexible {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.espaciado-auto {
+    margin: auto;
+}
+
+.ancho-completo {
+    width: 100%;
+}
+
+.alto-completo {
+    height: 100%;
+}
+
+.puntero {
+    cursor: pointer;
+}
+
+.sin-seleccion {
+    user-select: none;
+}
+
+.transicion-rapida {
+    transition: var(--transicion-rapida);
+}
+
+.transicion-normal {
+    transition: var(--transicion-normal);
+}
+
+.sombra-suave {
+    box-shadow: var(--sombra-suave);
+}
+
+.sombra-media {
+    box-shadow: var(--sombra-media);
+}
+
+.radio-pequeno {
+    border-radius: var(--radio-borde-pequeno);
+}
+
+.radio-mediano {
+    border-radius: var(--radio-borde-mediano);
+}
+
+.radio-grande {
+    border-radius: var(--radio-borde-grande);
+}
+
+.radio-completo {
+    border-radius: var(--radio-borde-completo);
+}
+
+.desvanecer {
+    animation: var(--animacion-desvanecer);
+}
+
+.deslizar-arriba {
+    animation: var(--animacion-deslizar-arriba);
+}
+
+.deslizar-abajo {
+    animation: var(--animacion-deslizar-abajo);
+}
+
+.escalar {
+    animation: var(--animacion-escalar);
+}
+
+.temblar {
+    animation: var(--animacion-temblar);
+}
