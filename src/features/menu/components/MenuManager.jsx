@@ -18,7 +18,6 @@ import {
   Pencil,
   Plus,
   Search,
-  Store,
   Trash2,
   UtensilsCrossed,
   X,
@@ -488,33 +487,6 @@ function MenuManager() {
           setOpenMenu(null)
       }}
     >
-      <header className="topbar">
-        <a aria-label="Mesa, inicio" className="brand-lockup" href="#menu">
-          <span className="brand-mark">
-            <UtensilsCrossed size={19} strokeWidth={2.2} />
-          </span>
-          <span className="brand-name">
-            mesa<span>.</span>
-          </span>
-          <span className="brand-divider" />
-          <span className="brand-product">GESTIÓN</span>
-        </a>
-        <div className="topbar-right">
-          <div className="store-switcher">
-            <span className="store-avatar">
-              <Store size={15} />
-            </span>
-            <span>Hansel Rodriguez</span>
-            <span className="open-indicator">
-              <span /> Abierto
-            </span>
-          </div>
-          <span aria-label="Hansel Rodriguez" className="topbar-profile">
-            HR
-          </span>
-        </div>
-      </header>
-
       <main className="manager-shell" id="menu">
         <div className="page-heading">
           <div>

@@ -23,7 +23,7 @@
 }
 
 .menu-app {
-  min-height: 100vh;
+  min-height: calc(100vh - 68px);
   background: var(--menu-canvas);
   color: var(--menu-ink);
 }
@@ -1698,6 +1698,10 @@
 }
 
 @media (max-width: 640px) {
+  .menu-app {
+    min-height: calc(100vh - 60px);
+  }
+
   .topbar {
     height: 60px;
     padding: 0 16px;

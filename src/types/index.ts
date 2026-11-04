@@ -35,6 +35,8 @@ export type OrderType = 'LOCAL' | 'DELIVERY' | 'TABLE'
 
 export type OrderStatus = 'PENDING' | 'IN_PROGRESS' | 'PAID'
 
+export type PaymentMethod = 'CASH' | 'CARD' | 'TRANSFER'
+
 export interface CartItem {
   id: string
   product: Producto
@@ -48,6 +50,9 @@ export interface Pedido {
   items: CartItem[]
   status: OrderStatus
   total: number
+  createdAt: string
+  paidAt?: string
+  paymentMethod?: PaymentMethod
   customerName?: string
 }
 
@@ -57,7 +62,23 @@ export interface Caja {
   isOpen: boolean
   initialAmount: number
   currentTotal: number
-  openedAt: Date | null
+  openedAt: string | null
+  cashCollected: number
+  transactions: MovimientoCaja[]
+}
+
+export interface MovimientoCaja {
+  id: string
+  orderId: string
+  amount: number
+  paymentMethod: PaymentMethod
+  createdAt: string
+}
+
+export interface SesionCaja extends Caja {
+  openedAt: string
+  closedAt: string
+  closingAmount: number
 }
 
 export interface Usuario {
