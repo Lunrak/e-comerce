@@ -11,14 +11,23 @@ export interface ModifierGroup {
   options: ModifierOption[]
 }
 
+export interface Categoria {
+  id: string
+  name: string
+  isVisible: boolean
+}
+
 export interface Producto {
   id: string
+  categoryId: string
   name: string
   description: string
   price: number
   discountPrice?: number
   image?: string
   isVisible: boolean
+  trackStock: boolean
+  stock: number
   modifiers: ModifierGroup[]
 }
 
