@@ -8,8 +8,9 @@ function CashRegisterModal({ onClose, onOpened }) {
   const [name, setName] = useState('Caja principal')
   const [initialAmount, setInitialAmount] = useState('')
   const [error, setError] = useState('')
+  const [isOpening, setIsOpening] = useState(false)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const amount = Number(initialAmount)
 
@@ -22,15 +23,17 @@ function CashRegisterModal({ onClose, onOpened }) {
       return
     }
 
-    dispatch(
-      openCash({
-        id: `cash-${Date.now()}`,
-        name: name.trim(),
-        initialAmount: amount,
-        openedAt: new Date().toISOString(),
-      }),
-    )
-    onOpened()
+    setIsOpening(true)
+    try {
+      await dispatch(
+        openCash({ name: name.trim(), initialAmount: amount }),
+      ).unwrap()
+      onOpened()
+    } catch (openError) {
+      setError(openError || 'No se pudo abrir la caja.')
+    } finally {
+      setIsOpening(false)
+    }
   }
 
   return (
@@ -110,6 +113,7 @@ function CashRegisterModal({ onClose, onOpened }) {
           <footer className="cash-dialog-actions">
             <button
               className="secondary-button"
+              disabled={isOpening}
               onClick={onClose}
               type="button"
             >
@@ -119,13 +123,19 @@ function CashRegisterModal({ onClose, onOpened }) {
               className="primary-button"
               disabled={
                 !name.trim() ||
+                isOpening ||
                 initialAmount === '' ||
                 !Number.isFinite(Number(initialAmount)) ||
                 Number(initialAmount) < 0
               }
               type="submit"
             >
-              <Banknote size={16} /> Abrir caja
+              {isOpening ? (
+                <span className="button-spinner" />
+              ) : (
+                <Banknote size={16} />
+              )}
+              {isOpening ? 'Abriendo…' : 'Abrir caja'}
             </button>
           </footer>
         </form>

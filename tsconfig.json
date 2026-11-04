@@ -8,5 +8,11 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["src/types/**/*.ts", "src/features/menu/mockApi.ts"]
+  "include": [
+    "src/types/**/*.ts",
+    "src/features/auth/**/*.ts",
+    "src/features/data/**/*.ts",
+    "src/lib/**/*.ts",
+    "src/env.d.ts"
+  ]
 }

@@ -8,12 +8,13 @@
     "build": "vite build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\" \"css/**/*.css\" \"*.js\" package.json index.html",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css}\" \"css/**/*.css\" \"*.js\" package.json tsconfig.json index.html",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css}\" \"css/**/*.css\" \"*.js\" package.json tsconfig.json",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css}\" \"css/**/*.css\" \"*.js\" package.json tsconfig.json",
     "preview": "vite preview"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.14.0",
+    "@supabase/supabase-js": "^2.119.0",
     "lucide-react": "^1.68.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

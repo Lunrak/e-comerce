@@ -1,5 +1,12 @@
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Check, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
+import {
+  addCartProduct,
+  changeCartQuantity,
+  removeCartItem,
+  setCartDetails,
+} from '../cart/cartSlice.js'
 
 const currency = new Intl.NumberFormat('es-CU', {
   style: 'currency',
@@ -13,12 +20,23 @@ const makeId = () =>
   `item-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
 
 function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
-  const [type, setType] = useState('LOCAL')
-  const [customerName, setCustomerName] = useState('')
+  const dispatch = useDispatch()
+  const { items, type, customerName } = useSelector((state) => state.cart)
   const [selectedProductId, setSelectedProductId] = useState(
     products[0]?.id ?? '',
   )
-  const [items, setItems] = useState([])
+  const [selectedModifierIds, setSelectedModifierIds] = useState([])
+  const selectedProduct = products.find(
+    (product) => product.id === selectedProductId,
+  )
+  const selectedModifiers = (selectedProduct?.modifiers ?? [])
+    .flatMap((group) => group.options)
+    .filter((modifier) => selectedModifierIds.includes(modifier.id))
+  const requiredModifiersSelected = (selectedProduct?.modifiers ?? [])
+    .filter((group) => group.required)
+    .every((group) =>
+      group.options.some((option) => selectedModifierIds.includes(option.id)),
+    )
 
   const total = items.reduce((sum, item) => {
     const modifiersPrice = item.modifiers.reduce(
@@ -31,29 +49,17 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
   const addProduct = () => {
     const product = products.find((item) => item.id === selectedProductId)
     if (!product) return
-    setItems((current) => {
-      const existing = current.find((item) => item.product.id === product.id)
-      if (existing) {
-        return current.map((item) =>
-          item.id === existing.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        )
-      }
-      return [...current, { id: makeId(), product, quantity: 1, modifiers: [] }]
-    })
+    dispatch(
+      addCartProduct({
+        product,
+        itemId: makeId(),
+        modifiers: selectedModifiers,
+      }),
+    )
   }
 
   const updateQuantity = (itemId, difference) => {
-    setItems((current) =>
-      current
-        .map((item) =>
-          item.id === itemId
-            ? { ...item, quantity: item.quantity + difference }
-            : item,
-        )
-        .filter((item) => item.quantity > 0),
-    )
+    dispatch(changeCartQuantity({ itemId, difference }))
   }
 
   const handleSubmit = (event) => {
@@ -103,7 +109,7 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
                   aria-pressed={type === option.id}
                   className={type === option.id ? 'order-type-active' : ''}
                   key={option.id}
-                  onClick={() => setType(option.id)}
+                  onClick={() => dispatch(setCartDetails({ type: option.id }))}
                   type="button"
                 >
                   {option.label}
@@ -116,7 +122,9 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
               <input
                 autoComplete="name"
                 id="order-customer"
-                onChange={(event) => setCustomerName(event.target.value)}
+                onChange={(event) =>
+                  dispatch(setCartDetails({ customerName: event.target.value }))
+                }
                 placeholder="Nombre del cliente"
                 value={customerName}
               />
@@ -127,7 +135,10 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
                 Agregar producto
                 <select
                   id="order-product"
-                  onChange={(event) => setSelectedProductId(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedProductId(event.target.value)
+                    setSelectedModifierIds([])
+                  }}
                   value={selectedProductId}
                 >
                   {products.map((product) => (
@@ -149,6 +160,52 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
               </button>
             </div>
 
+            {selectedProduct?.modifiers?.map((group) => (
+              <fieldset className="order-modifier-group" key={group.id}>
+                <legend>
+                  {group.name}{' '}
+                  <span>{group.required ? 'Obligatorio' : 'Opcional'}</span>
+                </legend>
+                <div>
+                  {group.options.map((option) => {
+                    const checked = selectedModifierIds.includes(option.id)
+                    return (
+                      <label key={option.id}>
+                        <input
+                          checked={checked}
+                          name={`modifier-${group.id}`}
+                          onChange={() => {
+                            setSelectedModifierIds((current) => {
+                              if (group.required) {
+                                return [
+                                  ...current.filter(
+                                    (id) =>
+                                      !group.options.some(
+                                        (item) => item.id === id,
+                                      ),
+                                  ),
+                                  option.id,
+                                ]
+                              }
+                              return checked
+                                ? current.filter((id) => id !== option.id)
+                                : [...current, option.id]
+                            })
+                          }}
+                          type={group.required ? 'radio' : 'checkbox'}
+                          value={option.id}
+                        />
+                        <span>{option.name}</span>
+                        {option.priceAdjustment > 0 && (
+                          <b>+ {currency.format(option.priceAdjustment)}</b>
+                        )}
+                      </label>
+                    )
+                  })}
+                </div>
+              </fieldset>
+            ))}
+
             <div className="order-items-heading">
               <h3>Productos</h3>
               <span>
@@ -161,7 +218,23 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
                   <div className="order-line-item" key={item.id}>
                     <div className="order-line-product">
                       <strong>{item.product.name}</strong>
-                      <span>{currency.format(priceFor(item.product))} c/u</span>
+                      <span>
+                        {currency.format(
+                          priceFor(item.product) +
+                            item.modifiers.reduce(
+                              (sum, modifier) => sum + modifier.priceAdjustment,
+                              0,
+                            ),
+                        )}{' '}
+                        c/u
+                      </span>
+                      {item.modifiers.length > 0 && (
+                        <small>
+                          {item.modifiers
+                            .map((modifier) => modifier.name)
+                            .join(', ')}
+                        </small>
+                      )}
                     </div>
                     <div className="quantity-control">
                       <button
@@ -181,16 +254,19 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
                       </button>
                     </div>
                     <strong className="order-line-total">
-                      {currency.format(priceFor(item.product) * item.quantity)}
+                      {currency.format(
+                        (priceFor(item.product) +
+                          item.modifiers.reduce(
+                            (sum, modifier) => sum + modifier.priceAdjustment,
+                            0,
+                          )) *
+                          item.quantity,
+                      )}
                     </strong>
                     <button
                       aria-label={`Eliminar ${item.product.name} del pedido`}
                       className="icon-button order-remove-item"
-                      onClick={() =>
-                        setItems((current) =>
-                          current.filter((line) => line.id !== item.id),
-                        )
-                      }
+                      onClick={() => dispatch(removeCartItem(item.id))}
                       type="button"
                     >
                       <Trash2 size={15} />
@@ -221,7 +297,9 @@ function OrderFormModal({ products, isSaving, onClose, onSubmit }) {
             </button>
             <button
               className="primary-button"
-              disabled={items.length === 0 || isSaving}
+              disabled={
+                items.length === 0 || isSaving || !requiredModifiersSelected
+              }
               type="submit"
             >
               {isSaving ? (

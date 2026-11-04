@@ -1,4 +1,10 @@
-import { Banknote, ClipboardList, History, UtensilsCrossed } from 'lucide-react'
+import {
+  Banknote,
+  ClipboardList,
+  History,
+  LogOut,
+  UtensilsCrossed,
+} from 'lucide-react'
 
 const views = [
   { id: 'pos', label: 'Pedidos', Icon: ClipboardList },
@@ -6,7 +12,14 @@ const views = [
   { id: 'menu', label: 'Menú', Icon: UtensilsCrossed },
 ]
 
-function WorkspaceHeader({ activeView, cashOpen, onCashClick, onNavigate }) {
+function WorkspaceHeader({
+  activeView,
+  cashOpen,
+  profile,
+  onCashClick,
+  onNavigate,
+  onSignOut,
+}) {
   return (
     <header className="topbar app-topbar">
       <a aria-label="Mesa, inicio" className="brand-lockup" href="#workspace">
@@ -21,18 +34,20 @@ function WorkspaceHeader({ activeView, cashOpen, onCashClick, onNavigate }) {
       </a>
 
       <nav aria-label="Secciones principales" className="workspace-nav">
-        {views.map(({ id, label, Icon }) => (
-          <button
-            aria-current={activeView === id ? 'page' : undefined}
-            className={activeView === id ? 'workspace-nav-active' : ''}
-            key={id}
-            onClick={() => onNavigate(id)}
-            type="button"
-          >
-            <Icon size={16} />
-            <span>{label}</span>
-          </button>
-        ))}
+        {views
+          .filter(({ id }) => id !== 'menu' || profile?.role === 'admin')
+          .map(({ id, label, Icon }) => (
+            <button
+              aria-current={activeView === id ? 'page' : undefined}
+              className={activeView === id ? 'workspace-nav-active' : ''}
+              key={id}
+              onClick={() => onNavigate(id)}
+              type="button"
+            >
+              <Icon size={16} />
+              <span>{label}</span>
+            </button>
+          ))}
       </nav>
 
       <div className="topbar-right">
@@ -48,14 +63,20 @@ function WorkspaceHeader({ activeView, cashOpen, onCashClick, onNavigate }) {
           <span className="store-avatar">
             <UtensilsCrossed size={14} />
           </span>
-          <span>Hansel Rodriguez</span>
+          <span>{profile?.full_name || 'Equipo'}</span>
           <span className="open-indicator">
             <span /> Abierto
           </span>
         </div>
-        <span aria-label="Hansel Rodriguez" className="topbar-profile">
-          HR
-        </span>
+        <button
+          aria-label="Cerrar sesión"
+          className="topbar-profile"
+          onClick={onSignOut}
+          title="Cerrar sesión"
+          type="button"
+        >
+          <LogOut size={15} />
+        </button>
       </div>
     </header>
   )

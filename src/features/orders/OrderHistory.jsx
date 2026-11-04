@@ -28,6 +28,7 @@ const paymentLabels = {
 
 function OrderHistory() {
   const history = useSelector((state) => state.orders.history)
+  const isLoading = useSelector((state) => state.orders.historyLoading)
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [search, setSearch] = useState('')
@@ -120,7 +121,12 @@ function OrderHistory() {
           <span>Total</span>
           <span>Estado</span>
         </div>
-        {filteredOrders.length ? (
+        {isLoading ? (
+          <div className="history-empty" role="status">
+            <span className="button-spinner" />
+            <strong>Cargando historial…</strong>
+          </div>
+        ) : filteredOrders.length ? (
           filteredOrders.map((order) => (
             <article className="history-row" key={order.id}>
               <strong className="history-order-id">

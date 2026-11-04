@@ -1,17 +1,19 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { registerCashMovement } from '../cash/cashSlice.js'
+import { refreshCash } from '../cash/cashSlice.js'
+import * as dataApi from '../data/supabaseApi.ts'
 
-const createId = () =>
-  `order-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+export const fetchActiveOrders = createAsyncThunk(
+  'orders/fetchActive',
+  dataApi.fetchOrders,
+)
+export const fetchOrderHistory = createAsyncThunk(
+  'orders/fetchHistory',
+  dataApi.fetchOrderHistory,
+)
 
 export const createOrder = createAsyncThunk(
   'orders/createOrder',
-  async (draft) => ({
-    ...draft,
-    id: createId(),
-    status: 'PENDING',
-    createdAt: new Date().toISOString(),
-  }),
+  async (draft) => dataApi.createOrder(draft),
   {
     condition: (_, { getState }) => {
       const cash = getState().cash
@@ -27,23 +29,10 @@ export const createOrder = createAsyncThunk(
 
 export const finalizeOrder = createAsyncThunk(
   'orders/finalizeOrder',
-  async ({ orderId, paymentMethod }, { dispatch, getState }) => {
-    const order = getState().orders.active.find((item) => item.id === orderId)
-    const paidAt = new Date().toISOString()
-
-    if (paymentMethod === 'CASH') {
-      dispatch(
-        registerCashMovement({
-          id: `movement-${orderId}`,
-          orderId,
-          amount: order.total,
-          paymentMethod,
-          createdAt: paidAt,
-        }),
-      )
-    }
-
-    return { orderId, paymentMethod, paidAt }
+  async (payment, { dispatch }) => {
+    const order = await dataApi.finalizeOrder(payment)
+    dispatch(refreshCash())
+    return order
   },
   {
     condition: ({ orderId }, { getState }) => {
@@ -59,49 +48,76 @@ export const finalizeOrder = createAsyncThunk(
   },
 )
 
+const initialState = {
+  active: [],
+  history: [],
+  isCreating: false,
+  isLoading: false,
+  historyLoading: false,
+  finalizingOrderId: null,
+  error: null,
+}
+
 const ordersSlice = createSlice({
   name: 'orders',
-  initialState: {
-    active: [],
-    history: [],
-    isCreating: false,
-    finalizingOrderId: null,
+  initialState,
+  reducers: {
+    resetOrders: () => initialState,
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchActiveOrders.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(fetchActiveOrders.fulfilled, (state, action) => {
+        state.active = action.payload
+        state.isLoading = false
+      })
+      .addCase(fetchActiveOrders.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(fetchOrderHistory.pending, (state) => {
+        state.historyLoading = true
+      })
+      .addCase(fetchOrderHistory.fulfilled, (state, action) => {
+        state.history = action.payload
+        state.historyLoading = false
+      })
+      .addCase(fetchOrderHistory.rejected, (state, action) => {
+        state.historyLoading = false
+        state.error = action.error.message
+      })
       .addCase(createOrder.pending, (state) => {
         state.isCreating = true
+        state.error = null
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.active.unshift(action.payload)
         state.isCreating = false
       })
-      .addCase(createOrder.rejected, (state) => {
+      .addCase(createOrder.rejected, (state, action) => {
         state.isCreating = false
+        if (!action.meta.condition) state.error = action.error.message
       })
       .addCase(finalizeOrder.pending, (state, action) => {
         state.finalizingOrderId = action.meta.arg.orderId
+        state.error = null
       })
       .addCase(finalizeOrder.fulfilled, (state, action) => {
-        const index = state.active.findIndex(
-          (order) => order.id === action.payload.orderId,
+        state.active = state.active.filter(
+          (order) => order.id !== action.payload.id,
         )
-        if (index === -1) return
-
-        const [order] = state.active.splice(index, 1)
-        state.history.unshift({
-          ...order,
-          status: 'PAID',
-          paymentMethod: action.payload.paymentMethod,
-          paidAt: action.payload.paidAt,
-        })
+        state.history.unshift(action.payload)
         state.finalizingOrderId = null
       })
-      .addCase(finalizeOrder.rejected, (state) => {
+      .addCase(finalizeOrder.rejected, (state, action) => {
         state.finalizingOrderId = null
+        if (!action.meta.condition) state.error = action.error.message
       })
   },
 })
 
+export const { resetOrders } = ordersSlice.actions
 export default ordersSlice.reducer

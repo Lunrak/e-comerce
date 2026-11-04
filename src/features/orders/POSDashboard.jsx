@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { createOrder, finalizeOrder } from './ordersSlice.js'
+import { clearCart } from '../cart/cartSlice.js'
 import OrderFormModal from './OrderFormModal.jsx'
 import PaymentModal from './PaymentModal.jsx'
 
@@ -93,6 +94,7 @@ function POSDashboard({ cashOpen, onOpenCash }) {
   const cash = useSelector((state) => state.cash)
   const activeOrders = useSelector((state) => state.orders.active)
   const isCreating = useSelector((state) => state.orders.isCreating)
+  const isOrdersLoading = useSelector((state) => state.orders.isLoading)
   const finalizingOrderId = useSelector(
     (state) => state.orders.finalizingOrderId,
   )
@@ -121,6 +123,7 @@ function POSDashboard({ cashOpen, onOpenCash }) {
   const handleCreateOrder = async (draft) => {
     try {
       await dispatch(createOrder(draft)).unwrap()
+      dispatch(clearCart())
       setIsOrderFormOpen(false)
       setNotice({
         message: 'Pedido agregado a la lista activa.',
@@ -276,7 +279,12 @@ function POSDashboard({ cashOpen, onOpenCash }) {
           </span>
         </div>
 
-        {filteredOrders.length ? (
+        {isOrdersLoading ? (
+          <div className="pos-empty-state" role="status">
+            <span className="button-spinner" />
+            <strong>Cargando pedidos del servidor…</strong>
+          </div>
+        ) : filteredOrders.length ? (
           <div className="active-orders-grid">
             {filteredOrders.map((order) => (
               <OrderCard

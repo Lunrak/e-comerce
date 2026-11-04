@@ -1,41 +1,41 @@
 import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit'
-import * as mockApi from './mockApi.ts'
+import * as menuApi from '../data/supabaseApi.ts'
 
-export const fetchMenu = createAsyncThunk('menu/fetchMenu', mockApi.fetchMenu)
+export const fetchMenu = createAsyncThunk('menu/fetchMenu', menuApi.fetchMenu)
 
 export const saveMenuProduct = createAsyncThunk(
   'menu/saveProduct',
-  mockApi.saveProduct,
+  menuApi.saveProduct,
 )
 
 export const setMenuProductVisibility = createAsyncThunk(
   'menu/setProductVisibility',
-  ({ id, isVisible }) => mockApi.setProductVisibility(id, isVisible),
+  ({ id, isVisible }) => menuApi.setProductVisibility(id, isVisible),
 )
 
 export const duplicateMenuProduct = createAsyncThunk(
   'menu/duplicateProduct',
-  mockApi.duplicateProduct,
+  menuApi.duplicateProduct,
 )
 
 export const deleteMenuProduct = createAsyncThunk(
   'menu/deleteProduct',
-  mockApi.deleteProduct,
+  menuApi.deleteProduct,
 )
 
 export const saveMenuCategory = createAsyncThunk(
   'menu/saveCategory',
-  mockApi.saveCategory,
+  menuApi.saveCategory,
 )
 
 export const setMenuCategoryVisibility = createAsyncThunk(
   'menu/setCategoryVisibility',
-  ({ id, isVisible }) => mockApi.setCategoryVisibility(id, isVisible),
+  ({ id, isVisible }) => menuApi.setCategoryVisibility(id, isVisible),
 )
 
 export const deleteMenuCategory = createAsyncThunk(
   'menu/deleteCategory',
-  mockApi.deleteCategory,
+  menuApi.deleteCategory,
 )
 
 const productMutationThunks = [
@@ -57,7 +57,15 @@ const menuSlice = createSlice({
     isMutating: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    resetMenu: () => ({
+      categories: [],
+      products: [],
+      status: 'idle',
+      isMutating: false,
+      error: null,
+    }),
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMenu.pending, (state) => {
@@ -133,4 +141,5 @@ const menuSlice = createSlice({
   },
 })
 
+export const { resetMenu } = menuSlice.actions
 export default menuSlice.reducer

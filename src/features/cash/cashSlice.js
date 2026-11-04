@@ -1,99 +1,122 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import * as dataApi from '../data/supabaseApi.ts'
 
-export const closeCash = createAsyncThunk(
-  'cash/closeCash',
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState()
-    if (!state.cash.isCashOpen)
-      return rejectWithValue('La caja ya está cerrada.')
-    if (state.orders.active.length > 0) {
-      return rejectWithValue(
-        'Cobra o cancela los pedidos activos antes de cerrar.',
-      )
-    }
-    return { closedAt: new Date().toISOString() }
-  },
+function mapCashSession(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    isOpen: true,
+    initialAmount: Number(row.opening_amount),
+    cashCollected: Number(row.cash_collected),
+    currentTotal: Number(row.opening_amount) + Number(row.cash_collected),
+    openedAt: row.opened_at,
+    transactions: (row.cash_movements ?? []).map((movement) => ({
+      id: movement.id,
+      orderId: movement.order_id,
+      amount: Number(movement.amount),
+      paymentMethod: movement.payment_method,
+      createdAt: movement.created_at,
+    })),
+  }
+}
+
+export const refreshCash = createAsyncThunk('cash/refresh', async () => {
+  const row = await dataApi.fetchOpenCash()
+  return row ? mapCashSession(row) : null
+})
+
+export const openCash = createAsyncThunk(
+  'cash/openCash',
+  async ({ name, initialAmount }) =>
+    mapCashSession(await dataApi.openCash({ name, initialAmount })),
 )
+
+export const closeCash = createAsyncThunk('cash/closeCash', dataApi.closeCash)
+
+const initialState = {
+  isCashOpen: false,
+  currentCashId: null,
+  name: null,
+  initialAmount: null,
+  currentTotal: 0,
+  cashCollected: 0,
+  openedAt: null,
+  transactions: [],
+  closedSessions: [],
+  isLoading: false,
+  isOpening: false,
+  isClosing: false,
+  error: null,
+}
 
 const cashSlice = createSlice({
   name: 'cash',
-  initialState: {
-    isCashOpen: false,
-    currentCashId: null,
-    name: null,
-    initialAmount: null,
-    currentTotal: 0,
-    cashCollected: 0,
-    openedAt: null,
-    transactions: [],
-    closedSessions: [],
-    isClosing: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    openCash(state, action) {
-      const { id, name, initialAmount, openedAt } = action.payload
-      if (
-        state.isCashOpen ||
-        !Number.isFinite(initialAmount) ||
-        initialAmount < 0
-      ) {
-        return
-      }
-
-      state.isCashOpen = true
-      state.currentCashId = id
-      state.name = name
-      state.initialAmount = initialAmount
-      state.currentTotal = initialAmount
-      state.cashCollected = 0
-      state.openedAt = openedAt
-      state.transactions = []
-      state.error = null
-    },
-    registerCashMovement(state, action) {
-      const movement = action.payload
-      if (!state.isCashOpen || movement.paymentMethod !== 'CASH') return
-      if (!Number.isFinite(movement.amount) || movement.amount <= 0) return
-
-      state.transactions.push(movement)
-      state.cashCollected += movement.amount
-      state.currentTotal = state.initialAmount + state.cashCollected
-    },
+    resetCash: () => initialState,
   },
   extraReducers: (builder) => {
     builder
+      .addCase(refreshCash.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(refreshCash.fulfilled, (state, action) => {
+        state.isLoading = false
+        if (action.payload) Object.assign(state, action.payload)
+        else {
+          state.isCashOpen = false
+          state.currentCashId = null
+          state.name = null
+          state.initialAmount = null
+          state.currentTotal = 0
+          state.cashCollected = 0
+          state.openedAt = null
+          state.transactions = []
+        }
+      })
+      .addCase(refreshCash.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.error.message
+      })
+      .addCase(openCash.pending, (state) => {
+        state.isOpening = true
+        state.error = null
+      })
+      .addCase(openCash.fulfilled, (state, action) => {
+        Object.assign(state, action.payload, {
+          isOpening: false,
+          isLoading: false,
+          error: null,
+        })
+      })
+      .addCase(openCash.rejected, (state, action) => {
+        state.isOpening = false
+        state.error = action.error.message
+      })
       .addCase(closeCash.pending, (state) => {
         state.isClosing = true
         state.error = null
       })
       .addCase(closeCash.fulfilled, (state, action) => {
-        state.closedSessions.unshift({
-          id: state.currentCashId,
-          name: state.name,
-          openedAt: state.openedAt,
-          closedAt: action.payload.closedAt,
-          initialAmount: state.initialAmount,
-          cashCollected: state.cashCollected,
-          closingAmount: state.currentTotal,
-          transactions: state.transactions,
+        state.closedSessions.unshift(action.payload)
+        Object.assign(state, {
+          isCashOpen: false,
+          currentCashId: null,
+          name: null,
+          initialAmount: null,
+          currentTotal: 0,
+          cashCollected: 0,
+          openedAt: null,
+          transactions: [],
+          isClosing: false,
         })
-        state.isCashOpen = false
-        state.currentCashId = null
-        state.name = null
-        state.initialAmount = null
-        state.currentTotal = 0
-        state.cashCollected = 0
-        state.openedAt = null
-        state.transactions = []
-        state.isClosing = false
       })
       .addCase(closeCash.rejected, (state, action) => {
         state.isClosing = false
-        state.error = action.payload || action.error.message
+        state.error = action.error.message
       })
   },
 })
 
-export const { openCash, registerCashMovement } = cashSlice.actions
+export const { resetCash } = cashSlice.actions
 export default cashSlice.reducer
